@@ -1,0 +1,23 @@
+{
+  "name": "owlbot",
+  "version": "1.0.0",
+  "description": "Slack bot to help Support in finding experts and documentation",
+  "main": "index.js",
+  "dependencies": {
+    "botkit": "^0.5.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/richkk/owlbot.git"
+  },
+  "author": "Team10",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/richkk/owlbot/issues"
+  },
+  "homepage": "https://github.com/richkk/owlbot#readme"
+}
