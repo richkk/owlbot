@@ -7,9 +7,9 @@
     "node": "6.9.2"
   },
   "dependencies": {
-    "botkit": "^0.5.1"
+    "botkit": "^0.5.1",
+    "node-env-file": "^0.1.8"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "node slack_bot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
