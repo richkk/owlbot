@@ -1,7 +1,7 @@
 {
   "name": "owlbot",
   "version": "1.0.0",
-  "description": "Slack bot to help Support in finding experts and documentation",
+  "description": "Slack bot to help Support in finding Help",
   "main": "index.js",
   "dependencies": {
     "botkit": "^0.5.1"
