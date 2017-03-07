@@ -7,7 +7,9 @@
     "node": "6.9.2"
   },
   "dependencies": {
+    "async": "^2.1.5",
     "botkit": "^0.5.1",
+    "bunyan": "^1.8.8",
     "firebase-admin": "^4.1.2",
     "node-env-file": "^0.1.8"
   },
