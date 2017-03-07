@@ -4,6 +4,7 @@ var Botkit = require('botkit');
 var Firebase = require('firebase-admin');
 
 var ReactionService = require('./utilities/reaction-service');
+var RoleService = require('./services/role-service');
 var ShutdownService = require('./services/shutdown-service');
 var TootsieRollService = require('./services/tootsie-roll-service');
 var UptimeService = require('./services/uptime-service');
@@ -119,6 +120,16 @@ controller.hears(['what is my name', 'who am i'], 'direct_message,direct_mention
             });
         }
     });
+});
+
+controller.hears(['teach you about a new kind of employee'],
+    'direct_message,direct_mention,mention', function(bot, message) {
+        RoleService.teachNewRole(Firebase, bot, message);
+});
+
+controller.hears(['teach you about a skill'],
+    'direct_message,direct_mention,mention', function(bot, message) {
+        RoleService.teachSkill(Firebase, bot, message);
 });
 
 controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function(bot, message) {
