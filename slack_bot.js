@@ -26,6 +26,7 @@ async.waterfall([
     }
 );
 
+// CONTROLLER
 controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function(bot, message) {
     ReactionService.addReaction(bot, message, "robot_face");
     controller.storage.users.get(message.user, function(err, user) {
@@ -134,6 +135,7 @@ controller.hears(['how many licks', 'tootsie roll'],
         TootsieRollService.handle(Firebase, bot, message);
 });
 
+// STARTUP FUNCTIONS
 function initializeCredentials(callback) {
     if (!process.env.SLACK_TOKEN  || !process.env.FIREBASE_PRIVATE_KEY) {
         // try loading from a .env file since they didn't load automatically
