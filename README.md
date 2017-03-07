@@ -9,6 +9,7 @@
 ## Setup Required Properties
 * In the root level project directory, create a `.env` file
 * In the `.env` file, add `SLACK_TOKEN=$theBotToken`, replacing `$theBotToken` with the API token for this project's Slack Bot.
+* You will need to add similar properties for Firebase configurations, etc.
 
 ## Running Locally
 

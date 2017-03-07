@@ -2,8 +2,9 @@
 .idea
 *.iml
 
-# Environment Variables
+# Environment Variables and Credentials
 .env
+firebase-credentials.json
 
 # Logs
 logs
