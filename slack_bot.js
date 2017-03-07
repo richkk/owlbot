@@ -8,6 +8,7 @@ var RoleService = require('./services/role-service');
 var ShutdownService = require('./services/shutdown-service');
 var TootsieRollService = require('./services/tootsie-roll-service');
 var UptimeService = require('./services/uptime-service');
+var InterviewService = require('./services/interview-service');
 
 var logger = bunyan.createLogger({name: "owlbot"});
 var bot = null;
@@ -130,6 +131,10 @@ controller.hears(['teach you about a new kind of employee'],
 controller.hears(['teach you about a skill'],
     'direct_message,direct_mention,mention', function(bot, message) {
         RoleService.teachSkill(Firebase, bot, message);
+});
+
+controller.hears(['interviewtime', 'ime'],'direct_message,direct_mention,mention', function(bot,message) {
+    InterviewService.handle(Firebase, bot, message);
 });
 
 controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function(bot, message) {
