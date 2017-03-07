@@ -62,24 +62,33 @@
  -> http://howdy.ai/botkit
 
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+var Botkit = require('botkit');
+var Firebase = require('firebase-admin');
+var TootsieRollService = require('./tootsie-roll-service');
+var UptimeService = require('./uptime-service');
 
-
-if (!process.env.SLACK_TOKEN) {
-    // try loading it from a .env file since it didn't load automatically
+if (!process.env.SLACK_TOKEN  || !process.env.FIREBASE_PRIVATE_KEY) {
+    // try loading from a .env file since they didn't load automatically
     var env = require('node-env-file');
     env(__dirname + '/.env');
-    if(!process.env.SLACK_TOKEN) {
+    if(!process.env.SLACK_TOKEN  || !process.env.FIREBASE_PRIVATE_KEY) {
         // still nothing so error out
-        console.log('Error: Specify SLACK_TOKEN in environment');
+        console.log('Error: Specify environment variables in .env file');
         process.exit(1);
     }
 }
 
-var Botkit = require('botkit');
-var os = require('os');
+Firebase.initializeApp({
+    credential: Firebase.credential.cert({
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+        }),
+    databaseURL: "https://owlbot-f19f7.firebaseio.com"
+});
 
 var controller = Botkit.slackbot({
-    debug: true,
+    debug: true
 });
 
 var bot = controller.spawn({
@@ -91,7 +100,7 @@ controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', funct
     bot.api.reactions.add({
         timestamp: message.ts,
         channel: message.channel,
-        name: 'robot_face',
+        name: 'robot_face'
     }, function(err, res) {
         if (err) {
             bot.botkit.log('Failed to add emoji reaction :(', err);
@@ -219,33 +228,12 @@ controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function
     });
 });
 
-
 controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
     'direct_message,direct_mention,mention', function(bot, message) {
-
-        var hostname = os.hostname();
-        var uptime = formatUptime(process.uptime());
-
-        bot.reply(message,
-            ':robot_face: I am a bot named <@' + bot.identity.name +
-            '>. I have been running for ' + uptime + ' on ' + hostname + '.');
-
+        UptimeService.handle(bot, message);
     });
 
-function formatUptime(uptime) {
-    var unit = 'second';
-    if (uptime > 60) {
-        uptime = uptime / 60;
-        unit = 'minute';
-    }
-    if (uptime > 60) {
-        uptime = uptime / 60;
-        unit = 'hour';
-    }
-    if (uptime != 1) {
-        unit = unit + 's';
-    }
-
-    uptime = uptime + ' ' + unit;
-    return uptime;
-}
+controller.hears(['how many licks', 'tootsie roll'], 
+    'direct_message,direct_mention,mention', function(bot, message) {
+        TootsieRollService.handle(Firebase, bot, message);
+});
