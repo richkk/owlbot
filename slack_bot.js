@@ -65,8 +65,14 @@
 
 
 if (!process.env.SLACK_TOKEN) {
-    console.log('Error: Specify SLACK_TOKEN in environment');
-    process.exit(1);
+    // try loading it from a .env file since it didn't load automatically
+    var env = require('node-env-file');
+    env(__dirname + '/.env');
+    if(!process.env.SLACK_TOKEN) {
+        // still nothing so error out
+        console.log('Error: Specify SLACK_TOKEN in environment');
+        process.exit(1);
+    }
 }
 
 var Botkit = require('botkit');
@@ -97,7 +103,7 @@ controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', funct
         if (user && user.name) {
             bot.reply(message, 'Hello ' + user.name + '!!');
         } else {
-            bot.reply(message, 'Hello.');
+            bot.reply(message, 'Hello! I am an OwlBot and I know a lot about Who.');
         }
     });
 });
