@@ -6,7 +6,7 @@ var Firebase = require('firebase-admin');
 var ReactionService = require('./utilities/reaction-service');
 var RoleService = require('./services/role-service');
 var ShutdownService = require('./services/shutdown-service');
-var TootsieRollService = require('./services/tootsie-roll-service');
+var JokeService = require('./services/joke-service');
 var TopicService = require('./services/topic-service');
 var UptimeService = require('./services/uptime-service');
 var InterviewService = require('./services/interview-service');
@@ -74,12 +74,32 @@ controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function
 controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
     'direct_message,direct_mention,mention', function(bot, message) {
         UptimeService.handle(bot, message);
-    });
+});
 
 // JOKES
 controller.hears(['how many licks', 'tootsie roll'], 
     'direct_message,direct_mention,mention', function(bot, message) {
-        TootsieRollService.handle(Firebase, bot, message);
+        JokeService.handleTootsieRoll(Firebase, bot, message);
+});
+
+controller.hears(['favorite kind of math', 'do you like math', 'favorite subject'],
+    'direct_message,direct_mention,mention', function(bot, message) {
+        bot.reply(message, 'I like owlgebra. :school: :mortar_board:');
+});
+
+controller.hears(['favorite song', 'do you like music'],
+    'direct_message,direct_mention,mention', function(bot, message) {
+        bot.reply(message, ':microphone: Owl you need is :heart: :notes:');
+    });
+
+controller.hears(['favorite kind of books', 'do you like books', 'favorite book'],
+    'direct_message,direct_mention,mention', function(bot, message) {
+        bot.reply(message, 'I like hoo-dunnits. :mag: :sleuth_or_spy:');
+    });
+
+controller.hears(['tell a joke', 'knock knock joke'], 'direct_message,direct_mention,mention',
+    function(bot, message) {
+        JokeService.knockKnockJoke(bot, message);
 });
 
 // ****STARTUP FUNCTIONS****
