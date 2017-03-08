@@ -81,14 +81,14 @@ RoleService.prototype.teachSkill = function(firebase, bot, message) {
     bot.startConversation(message, askRole);
 };
 
-RoleService.prototype.getRoles = function(firebase, callback) {
+RoleService.prototype.getRoles = function(firebase, done) {
     var roles = []
     var dbRef = firebase.database().ref("roles").orderByKey();
-    dbRef.on("value", function(snapshot) {
+    dbRef.once("value").then(function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
             roles.push(childSnapshot.key)
         })
-        callback(null, roles);
+        return done(null, roles);
     });
 };
 
