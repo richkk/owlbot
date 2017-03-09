@@ -1,4 +1,6 @@
 # owlbot
+![baby owl](http://i.giphy.com/wi8srTXLsVgyI.gif)
+
 ## Team 10 Challenge
 Owlbot is a chat bot built with Node.js, Botkit, and the Google Firebase SDK. It is the bot that knows a lot about WHO,
 saving information about employee roles and areas of expertise to a Firebase database. If you've ever wondered WHO in
