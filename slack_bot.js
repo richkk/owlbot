@@ -84,9 +84,9 @@ controller.hears(['how many licks', 'tootsie roll'],
 });
 
 // EMPLOYEES
-controller.hears(['who is a', 'who knows about', 'test'],
+controller.hears(['who knows about', 'test'],
     'direct_message,direct_mention,mention', function(bot, message) {
-        EmployeeService.getEmployee(Firebase, bot, message);
+        EmployeeService.findAnEmployee(Firebase, bot, message);
 });
 
 // ****STARTUP FUNCTIONS****
