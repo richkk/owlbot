@@ -105,7 +105,6 @@ InterviewService.prototype.handle = function(firebase, bot, message) {
 				err = null;
 			}
 		}
-		callback(err);
 	});
 }
 
