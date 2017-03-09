@@ -1,5 +1,17 @@
 # owlbot
 ## Team 10 Challenge
+Owlbot is a chat bot built with Node.js, Botkit, and the Google Firebase SDK. It is the bot that knows a lot about WHO,
+saving information about employee roles and areas of expertise to a Firebase database. If you've ever wondered WHO in
+the company can help you with a problem, Owlbot can help!
+
+## Features
+* Extremely fast deployment using open source and free technologies
+* Grows more useful as users teach it
+* Technology agnostic:
+    * Node.js is the lingua franca of server-side applications
+    * Botkit works with a variety of messaging apps
+    * Firebase could be replaced with another NoSQL database for added functionality, like AWS Elasticsearch or Mongo
+* Hilarious owl jokes and dank memes
 
 ## Installation
 * `git clone` this repository

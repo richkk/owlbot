@@ -32,36 +32,37 @@ async.waterfall([
 // ****CONTROLLER****
 
 // HELLO
-controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['hello', '^hi', '^greetings'], 'direct_message,direct_mention,mention', function(bot, message) {
     ReactionService.addReaction(bot, message, "robot_face");
     bot.reply(message, 'Hello! I am an OwlBot and I know a lot about Who.');
 });
 
 // NEW ROLE
-controller.hears(['teach you about a new kind of employee'],
+controller.hears(['teach you about a kind of employee', 'teach you a new role', 'save a role'],
     'direct_message,direct_mention,mention', function(bot, message) {
         RoleService.teachNewRole(Firebase, bot, message);
 });
 
 // NEW SKILL
-controller.hears(['teach you about a skill'],
+controller.hears(['teach you about a skill', 'teach you a skill', 'save a skill'],
     'direct_message,direct_mention,mention', function(bot, message) {
         RoleService.teachSkill(Firebase, bot, message);
 });
 
 // NEW LINK
-controller.hears(['add a link'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['add a link', 'save a link'], 'direct_message,direct_mention,mention', function(bot, message) {
     TopicService.addLink(Firebase, bot, message);
 });
 
 // GET LINKS
-controller.hears(['get a link', 'get links', 'need links', 'need some links'],
+controller.hears(['get a link', 'get some links', 'get links', 'need links',
+        'need a link', 'need some links', 'get some info'],
     'direct_message,direct_mention,mention', function(bot, message) {
         TopicService.getLinks(Firebase, bot, message);
 });
 
 // INTERVIEW ME
-controller.hears(['interviewtime', 'ime'],'direct_message,direct_mention,mention', function(bot,message) {
+controller.hears(['interviewtime', 'ime', 'interview me'],'direct_message,direct_mention,mention', function(bot,message) {
     InterviewService.handle(Firebase, bot, message);
 });
 
@@ -87,19 +88,29 @@ controller.hears(['favorite kind of math', 'do you like math', 'favorite subject
         bot.reply(message, 'I like owlgebra. :school: :mortar_board:');
 });
 
-controller.hears(['favorite song', 'do you like music'],
+controller.hears(['favorite song', 'favorite kind of music', 'favorite music', 'do you like music'],
     'direct_message,direct_mention,mention', function(bot, message) {
         bot.reply(message, ':microphone: Owl you need is :heart: :notes:');
     });
 
-controller.hears(['favorite kind of books', 'do you like books', 'favorite book'],
+controller.hears(['favorite kind of book', 'do you like books', 'favorite book'],
     'direct_message,direct_mention,mention', function(bot, message) {
         bot.reply(message, 'I like hoo-dunnits. :mag: :sleuth_or_spy:');
     });
 
-controller.hears(['tell a joke', 'knock knock joke'], 'direct_message,direct_mention,mention',
+controller.hears(['tell a joke', 'tell us a joke', 'do you know any jokes',
+        'knock knock joke'], 'direct_message,direct_mention,mention',
     function(bot, message) {
         JokeService.knockKnockJoke(bot, message);
+});
+
+controller.hears(['do you know any dank memes', 'send me a dank meme', 'what is a dank meme'],
+    'direct_message,direct_mention,mention',
+    function(bot, message) {
+        bot.reply(message, {
+            text: "This video will explain: https://www.youtube.com/watch?v=i86FOvnahhA",
+            unfurl_media: false
+        });
 });
 
 // ****STARTUP FUNCTIONS****
