@@ -62,7 +62,7 @@ controller.hears(['get a link', 'get some links', 'get links', 'need links',
 });
 
 // INTERVIEW ME
-controller.hears(['interviewtime', 'ime', 'interview me'],'direct_message,direct_mention,mention', function(bot,message) {
+controller.hears(['interview me'],'direct_message,direct_mention,mention', function(bot,message) {
     InterviewService.handle(Firebase, bot, message);
 });
 

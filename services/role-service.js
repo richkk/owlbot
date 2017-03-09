@@ -1,3 +1,8 @@
+"use strict";
+var bunyan = require('bunyan');
+
+var logger = bunyan.createLogger({name: "RoleService"});
+
 function RoleService() {
     // See prototype methods
 }
@@ -81,15 +86,26 @@ RoleService.prototype.teachSkill = function(firebase, bot, message) {
     bot.startConversation(message, askRole);
 };
 
-RoleService.prototype.getRoles = function(firebase, done) {
+RoleService.prototype.getRoles = function(firebase, done)
+{
     var roles = []
     var dbRef = firebase.database().ref("roles").orderByKey();
-    dbRef.once("value").then(function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-            roles.push(childSnapshot.key)
-        })
-        return done(null, roles);
-    });
+    dbRef.once("value").then(function (snapshot)
+            {
+                snapshot.forEach(function (childSnapshot)
+                {
+                    roles.push(childSnapshot.key)
+                })
+                return done(null, roles);
+            }
+    );
+}
+
+RoleService.prototype.addRole = function(role, firebase) {
+    logger.info("Adding new role " + role);
+    //Could not just add a "role" without a skill so added a 'placeholder' skill
+    var dbRef = firebase.database().ref("roles/" + role + "/skills");
+    dbRef.child("placeholder").set('true');
 };
 
 module.exports = new RoleService();
