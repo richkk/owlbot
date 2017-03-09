@@ -101,11 +101,29 @@ RoleService.prototype.getRoles = function(firebase, done)
     );
 }
 
+RoleService.prototype.getSkills = function(role, firebase, callback) {
+    var skills = []
+    var dbRef = firebase.database().ref("roles/" + role + '/skills');
+    dbRef.once("value", function(snapshot) {
+        if (snapshot.val()) {
+            snapshot.forEach(function(childSnapshot) {
+                skills.push(childSnapshot.val())
+            })
+        }
+        callback(null, skills);
+    });
+};
+
 RoleService.prototype.addRole = function(role, firebase) {
-    logger.info("Adding new role " + role);
     //Could not just add a "role" without a skill so added a 'placeholder' skill
     var dbRef = firebase.database().ref("roles/" + role + "/skills");
     dbRef.child("placeholder").set('true');
+};
+
+RoleService.prototype.addRoleAndSkill = function(role, skill, firebase) {
+    var dbRef = firebase.database().ref("roles/" + role);
+    dbRef.child('skills').push(skill);
+    logger.info("Added role " + role + " and skill " + skill);
 };
 
 module.exports = new RoleService();
