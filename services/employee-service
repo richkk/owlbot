@@ -1,0 +1,45 @@
+var roleService = require('./role-service');
+
+function EmployeeService() {
+    // see prototype functions
+}
+
+EmployeeService.prototype.getEmployees = function (firebase) {
+    var employees = [];
+    var dbRef = firebase.database().ref("employees").orderByKey();
+    dbRef.once("value").then(function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            employees.push(childSnapshot.key)
+        });
+        return employees;
+    });
+};
+
+EmployeeService.prototype.getEmployee = function (firebase, bot, message) {
+    var getEmployee = function(response, convo) {
+        var userName = response.text;
+        var dbEmployeeRef = firebase.database().ref("employees/" + userName);
+        dbEmployeeRef.once('value', function(snapshot) {
+            if (snapshot.val()) {
+                convo.say("We do have an employee named " + snapshot.val());
+            } else {
+                convo.say('Sorry, I don\'t know any employees by that username.')
+            }
+        }).then(function () {
+            convo.next();
+        });
+    };
+
+    var whoToLookUp = function (error, convo) {
+        if (!error) {
+            convo.ask('Who do you want to know about?', function (response, convo) {
+                getEmployee(response, convo);
+                convo.next();
+            });
+        }
+    };
+
+    bot.startConversation(message, whoToLookUp);
+};
+
+module.exports = new EmployeeService();

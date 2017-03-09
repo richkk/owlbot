@@ -10,6 +10,7 @@ var TootsieRollService = require('./services/tootsie-roll-service');
 var TopicService = require('./services/topic-service');
 var UptimeService = require('./services/uptime-service');
 var InterviewService = require('./services/interview-service');
+var EmployeeService = require('./services/employee-service');
 
 var logger = bunyan.createLogger({name: "owlbot"});
 var bot = null;
@@ -77,9 +78,15 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
     });
 
 // JOKES
-controller.hears(['how many licks', 'tootsie roll'], 
+controller.hears(['how many licks', 'tootsie roll'],
     'direct_message,direct_mention,mention', function(bot, message) {
         TootsieRollService.handle(Firebase, bot, message);
+});
+
+// EMPLOYEES
+controller.hears(['who is a', 'who knows about', 'test'],
+    'direct_message,direct_mention,mention', function(bot, message) {
+        EmployeeService.getEmployee(Firebase, bot, message);
 });
 
 // ****STARTUP FUNCTIONS****
