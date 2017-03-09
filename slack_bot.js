@@ -9,6 +9,7 @@ var ShutdownService = require('./services/shutdown-service');
 var JokeService = require('./services/joke-service');
 var TopicService = require('./services/topic-service');
 var UptimeService = require('./services/uptime-service');
+var InfoTips = require('./utilities/info-tips');
 var InterviewService = require('./services/interview-service');
 
 var logger = bunyan.createLogger({name: "owlbot"});
@@ -37,6 +38,25 @@ controller.hears(['hello', '^hi', '^greetings'], 'direct_message,direct_mention,
     bot.reply(message, 'Hello! I am an OwlBot and I know a lot about Who.');
 });
 
+controller.hears(['what can you do'], 'direct_message,direct_mention,mention', function(bot, message) {
+    bot.startConversation(message, function(err, convo) {
+        if (err) {
+            logger.error(err.message);
+        } else {
+            convo.say('Here are some things I can do.');
+            convo.say('First of all, I can\'t be in a channel unless I\'m invited. Like a vampire. But don\'t worry, ' +
+                'I\'m not a vampire, I\'m a :robot_face:. So use "/invite."');
+            for (var tip in InfoTips) {
+                if (InfoTips.hasOwnProperty(tip)) {
+                    convo.say(InfoTips[tip]);
+                    convo.next();
+                }
+            }
+        }
+
+    });
+});
+
 // NEW ROLE
 controller.hears(['teach you about a kind of employee', 'teach you a new role', 'save a role'],
     'direct_message,direct_mention,mention', function(bot, message) {
@@ -44,7 +64,7 @@ controller.hears(['teach you about a kind of employee', 'teach you a new role', 
 });
 
 // NEW SKILL
-controller.hears(['teach you about a skill', 'teach you a skill', 'save a skill'],
+controller.hears(['teach you about a skill', 'teach you a new skill', 'teach you a skill', 'save a skill'],
     'direct_message,direct_mention,mention', function(bot, message) {
         RoleService.teachSkill(Firebase, bot, message);
 });

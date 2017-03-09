@@ -27,8 +27,16 @@ function formatUptime(uptime) {
         unit = unit + 's';
     }
 
-    uptime = uptime + ' ' + unit;
+    uptime = round(uptime, 2) + ' ' + unit;
     return uptime;
 }
+
+function round(number, precision) {
+    var factor = Math.pow(10, precision);
+    var tempNumber = number * factor;
+    var roundedTempNumber = Math.round(tempNumber);
+    return roundedTempNumber / factor;
+}
+
 
 module.exports = new UptimeService();
