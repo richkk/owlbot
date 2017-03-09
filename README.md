@@ -11,6 +11,7 @@ the company can help you with a problem, Owlbot can help!
     * Node.js is the lingua franca of server-side applications
     * Botkit works with a variety of messaging apps
     * Firebase could be replaced with another NoSQL database for added functionality, like AWS Elasticsearch or Mongo
+    * Heroku enabled rapid deploy, but Owlbot could be hosted anywhere since it performs all its work through APIs
 * Hilarious owl jokes and dank memes
 
 ## Installation
@@ -34,5 +35,6 @@ the company can help you with a problem, Owlbot can help!
 * `heroku create` (unless you want to use an existing Heroku deployment) - this creates a heroku remote for the app
 * `git push heroku master` - this builds and deploys the app on heroku
 * Once the project is deployed, ensure the environment variables are set correctly: `heroku config`
-* If the configs are not correct, run `heroku config:set SLACK_TOKEN=$theBotToken`, replacing as appropriate
-* Make sure the app is scaled correctly, run `heroku ps:scale worker=1` and `heroku ps:scale web=0` - this shouldn't be necessary given settings in the Procfile, but sometimes Heroku seems to ignore the Procfile
+* If the environment variables are not correct, run `heroku config:set SLACK_TOKEN=$theBotToken`, replacing as appropriate
+* You can also set environment variables in your Heroku console
+* Make sure the app is scaled correctly: run `heroku ps:scale worker=1` and `heroku ps:scale web=0` - this shouldn't be necessary given settings in the Procfile, but sometimes Heroku seems to ignore the Procfile
