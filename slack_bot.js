@@ -39,6 +39,10 @@ controller.hears(['hello', '^hi', '^greetings'], 'direct_message,direct_mention,
     bot.reply(message, 'Hello! I am an OwlBot and I know a lot about Who.');
 });
 
+controller.hears(['thank you', 'thanks', 'tyvm'], 'direct_message,direct_mention,mention', function(bot, message) {
+    bot.reply(message, 'You\'re welcome!');
+});
+
 controller.hears(['what can you do'], 'direct_message,direct_mention,mention', function(bot, message) {
     bot.startConversation(message, function(err, convo) {
         if (err) {
