@@ -58,6 +58,38 @@ EmployeeService.prototype.addEmployeeAndRoleAndSkills = function (employeeName, 
 	});
 };
 
+EmployeeService.prototype.whoKnows = function(firebase, bot, message) {
+	var tokenizedMessage = message.text.match(/(\S+)\s*(who knows about)\s*(\S+)/)[0].split(" ");
+	var role = tokenizedMessage[0];
+	var skill = tokenizedMessage[tokenizedMessage.length - 1];
+
+	var lookup = function(error, convo) {
+		convo.say('Okay, you need a ' + role + ' who knows about ' + skill + '.');
+		var dbRef = firebase.database().ref('employees');
+		// dbRef.orderByChild('skills').on("child_added", function (snapshot) {
+		// 	snapshot.forEach(function (employee) {
+		// 		convo.say(employee.key);
+		// 		convo.next();
+		// 	})
+		// });
+		dbRef.once("value", function(employees) {
+			employees.forEach(function(employee) {
+				if (employee.val().roles[role]) {
+					var skills = employee.val().skills;
+					for (var item in skills) {
+						if (skills.hasOwnProperty(item) && skills[item] === skill) {
+							convo.say(employee.key + ' knows ' + skill);
+							convo.next();
+						}
+					}
+				}
+			})
+		})
+	};
+
+	bot.startConversation(message, lookup);
+};
+
 var addEmployeeRole = function(employeeName, role, firebase, callback) {
 	var dbRef = firebase.database().ref('employees/' + employeeName + '/roles');
 	dbRef.child(role).set('true');
@@ -76,7 +108,7 @@ var addEmployeeSkills = function(employeeName, skills, firebase, callback) {
 };
 
 function getEmployeeSkills(employeeName, firebase, callback) {
-	var skills = []
+	var skills = [];
 	var dbRef = firebase.database().ref('employees/' + employeeName + '/skills');
 	dbRef.once("value", function(snapshot) {
 		if (snapshot.val()) {
@@ -87,5 +119,7 @@ function getEmployeeSkills(employeeName, firebase, callback) {
 		callback(null, skills);
 	});
 }
+
+
 
 module.exports = new EmployeeService();
