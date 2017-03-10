@@ -82,6 +82,12 @@ controller.hears(['get a link', 'get some links', 'get links', 'need links',
         TopicService.getLinks(Firebase, bot, message);
 });
 
+// GET LIST OF TOPICS
+controller.hears(['get topics', 'list topics'],
+    'direct_message, direct_mention, mention', function(bot, message) {
+            TopicService.getTopics(Firebase, bot, message);
+});
+
 // INTERVIEW ME
 controller.hears(['interview me'],'direct_message,direct_mention,mention', function(bot,message) {
     InterviewService.handle(Firebase, bot, message);

@@ -1,6 +1,7 @@
 function InfoTips() {
     this.links = 'I can save an informative link about a topic for you or other users. Say "save a link" or "add a link" to save a link. ' +
-        'Say "get a link" or "need a link" to ask if I have links saved about a particular topic.';
+        'Say "get a link" or "need a link" to ask if I have links saved about a particular topic. ' +
+        'Say "get topics" or "list topics" to see a list of topics. ';
     this.teach = 'You can teach me about new kinds of employees and skills. Say "teach you a new role" or "teach you a new skill". ' +
             'Then I\'ll remember them and other users can ask who knows those skills.';
     this.interview = 'If you want I can interview you to find out what role and skills you have. Say "interview me" to start.';
