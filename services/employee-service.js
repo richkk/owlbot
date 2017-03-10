@@ -1,8 +1,8 @@
 "use strict";
 
+var async = require('async');
 var waterfall = require('async/waterfall');
 var bunyan = require('bunyan');
-
 var logger = bunyan.createLogger({name: "EmployeeService"});
 
 function EmployeeService() {
@@ -33,7 +33,7 @@ EmployeeService.prototype.addEmployeeAndRoleAndSkills = function (employeeName, 
 		//Add new skills for employee
 		function (currentSkills, callback)
 		{
-			var newSkills = []
+			var newSkills = [];
 			for (var i = 0; i < skills.length; i++) {
 				var found = false;
 				for (var j = 0; j < currentSkills.length; j++) {
@@ -58,6 +58,91 @@ EmployeeService.prototype.addEmployeeAndRoleAndSkills = function (employeeName, 
 	});
 };
 
+EmployeeService.prototype.whoKnows = function(firebase, bot, message) {
+
+	var lookup = function(response, convo, role) {
+        var skill = response.text;
+        var foundOne = false;
+		convo.say('Okay, you need a ' + role + ' who knows about ' + skill + '.');
+		var dbRef = firebase.database().ref('employees');
+		dbRef.once("value", function(employees) {
+			employees.forEach(function(employee) {
+				if (employee.val().roles[role]) {
+					var skills = employee.val().skills;
+					for (var item in skills) {
+						if (skills.hasOwnProperty(item) && skills[item].toLowerCase() === skill.toLowerCase()) {
+                            foundOne = true;
+							convo.say(employee.key + ' knows ' + skill);
+                            convo.next();
+						}
+					}
+				}
+			})
+		}).then(function () {
+            if (foundOne) {
+                convo.say('That\'s all I can find.');
+                convo.next();
+            } else {
+                convo.say('Sorry, I could not find anyone. If you can find someone who knows, have me interview them!');
+                convo.next();
+            }
+        })
+	};
+
+	var askSkill = function(response, convo) {
+        var role = response.text;
+        convo.say('Okay, a ' + role + '.');
+        convo.ask('What skill?', function (response, convo) {
+            lookup(response, convo, role);
+            convo.next();
+        });
+    };
+
+	var askRole = function(error, convo) {
+        convo.ask('What employee role do you need?', function (response, convo) {
+            askSkill(response, convo);
+            convo.next();
+        });
+    };
+
+	bot.startConversation(message, askRole);
+};
+
+EmployeeService.prototype.findAnEmployee = function (firebase, bot, message) {
+
+	var findEmployee = function(response, convo) {
+		var theRole = response.text.toLowerCase();
+        var foundSome = false;
+        convo.say('Okay, I\'ll look for '  + theRole + ' role employees.');
+        var dbRef = firebase.database().ref('employees');
+        dbRef.once("value", function (snapshot) {
+            snapshot.forEach(function(employee) {
+                if (employee.val().roles[theRole]) {
+                    foundSome = true;
+                    convo.say(employee.key + ' is a ' + theRole + '.');
+                }
+            })
+        }).then(function() {
+            if (foundSome) {
+                convo.say('That\'s all I can find.');
+            } else {
+                convo.say('I could not find any.');
+            }
+            convo.next();
+        });
+	};
+
+	var whatToLookUp = function (error, convo) {
+		if (!error) {
+			convo.ask('What role do you want to know about?', function (response, convo) {
+				findEmployee(response, convo);
+			});
+		}
+	};
+
+	bot.startConversation(message, whatToLookUp);
+};
+
 var addEmployeeRole = function(employeeName, role, firebase, callback) {
 	var dbRef = firebase.database().ref('employees/' + employeeName + '/roles');
 	dbRef.child(role).set('true');
@@ -76,7 +161,7 @@ var addEmployeeSkills = function(employeeName, skills, firebase, callback) {
 };
 
 function getEmployeeSkills(employeeName, firebase, callback) {
-	var skills = []
+	var skills = [];
 	var dbRef = firebase.database().ref('employees/' + employeeName + '/skills');
 	dbRef.once("value", function(snapshot) {
 		if (snapshot.val()) {
@@ -87,5 +172,7 @@ function getEmployeeSkills(employeeName, firebase, callback) {
 		callback(null, skills);
 	});
 }
+
+
 
 module.exports = new EmployeeService();

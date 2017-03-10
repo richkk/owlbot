@@ -3,6 +3,7 @@ var bunyan = require('bunyan');
 var Botkit = require('botkit');
 var Firebase = require('firebase-admin');
 
+var EmployeeService = require('./services/employee-service');
 var ReactionService = require('./utilities/reaction-service');
 var RoleService = require('./services/role-service');
 var ShutdownService = require('./services/shutdown-service');
@@ -90,6 +91,16 @@ controller.hears(['get topics', 'list topics'],
 // INTERVIEW ME
 controller.hears(['interview me'],'direct_message,direct_mention,mention', function(bot,message) {
     InterviewService.handle(Firebase, bot, message);
+});
+
+// WHO KNOWS ABOUT
+controller.hears(['who knows about'], 'direct_message,direct_mention,mention', function(bot, message) {
+   EmployeeService.whoKnows(Firebase, bot, message);
+});
+
+// FIND EMPLOYEE
+controller.hears(['find an employee'], 'direct_message,direct_mention,mention', function(bot, message) {
+   EmployeeService.findAnEmployee(Firebase, bot, message);
 });
 
 // SHUTDOWN
