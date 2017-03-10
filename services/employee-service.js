@@ -1,8 +1,8 @@
 "use strict";
 
+var async = require('async');
 var waterfall = require('async/waterfall');
 var bunyan = require('bunyan');
-
 var logger = bunyan.createLogger({name: "EmployeeService"});
 
 function EmployeeService() {
@@ -88,6 +88,41 @@ EmployeeService.prototype.whoKnows = function(firebase, bot, message) {
 	};
 
 	bot.startConversation(message, lookup);
+};
+
+EmployeeService.prototype.findAnEmployee = function (firebase, bot, message) {
+
+	var findEmployee = function(response, convo) {
+		var theRole = response.text;
+        var foundSome = false;
+        convo.say('Okay, I\'ll look for '  + theRole + ' role employees.');
+        var dbRef = firebase.database().ref('employees');
+        dbRef.once("value", function (snapshot) {
+            snapshot.forEach(function(employee) {
+                if (employee.val().roles[theRole]) {
+                    foundSome = true;
+                    convo.say(employee.key + ' is a ' + theRole + '.');
+                }
+            })
+        }).then(function() {
+            if (foundSome) {
+                convo.say('That\'s all I can find.');
+            } else {
+                convo.say('I could not find any.');
+            }
+            convo.next();
+        });
+	};
+
+	var whatToLookUp = function (error, convo) {
+		if (!error) {
+			convo.ask('What role do you want to know about?', function (response, convo) {
+				findEmployee(response, convo);
+			});
+		}
+	};
+
+	bot.startConversation(message, whatToLookUp);
 };
 
 var addEmployeeRole = function(employeeName, role, firebase, callback) {

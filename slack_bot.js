@@ -92,6 +92,11 @@ controller.hears(['who knows about'], 'direct_message,direct_mention,mention', f
    EmployeeService.whoKnows(Firebase, bot, message);
 });
 
+// FIND EMPLOYEE
+controller.hears(['find an employee'], 'direct_message,direct_mention,mention', function(bot, message) {
+   EmployeeService.findAnEmployee(Firebase, bot, message);
+});
+
 // SHUTDOWN
 controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function(bot, message) {
     ShutdownService.handle(bot, message);
