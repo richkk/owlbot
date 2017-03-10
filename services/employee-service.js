@@ -69,7 +69,7 @@ EmployeeService.prototype.whoKnows = function(firebase, bot, message) {
 				if (employee.val().roles[role]) {
 					var skills = employee.val().skills;
 					for (var item in skills) {
-						if (skills.hasOwnProperty(item) && skills[item] === skill) {
+						if (skills.hasOwnProperty(item) && skills[item].toLowerCase() === skill.toLowerCase()) {
 							convo.say(employee.key + ' knows ' + skill);
 							convo.next();
 						}
@@ -101,7 +101,7 @@ EmployeeService.prototype.whoKnows = function(firebase, bot, message) {
 EmployeeService.prototype.findAnEmployee = function (firebase, bot, message) {
 
 	var findEmployee = function(response, convo) {
-		var theRole = response.text;
+		var theRole = response.text.toLowerCase();
         var foundSome = false;
         convo.say('Okay, I\'ll look for '  + theRole + ' role employees.');
         var dbRef = firebase.database().ref('employees');
