@@ -1,3 +1,8 @@
+"use strict";
+
+var waterfall = require('async/waterfall');
+var os = require("os");
+
 function TopicService() {
     // see prototype functions
 }
@@ -8,7 +13,7 @@ TopicService.prototype.addLink = function(firebase, bot, message) {
         convo.say('Okay, a new link about ' + topic + '.');
         convo.ask('What is the link?', function(response, convo) {
             var dbRef = firebase.database().ref('topics/' + topic + '/links');
-            dbRef.push(response.text);
+            dbRef.push(response.text.toLowerCase());
             convo.say(':bulb: Okay, I\'ll remember that link about ' + topic + '!');
             convo.next();
         });
@@ -29,7 +34,7 @@ TopicService.prototype.addLink = function(firebase, bot, message) {
 TopicService.prototype.getLinks = function (firebase, bot, message) {
     var sendLinks = function(response, convo) {
         convo.say('I\'ll see if I have any links . . . ');
-        var dbRef = firebase.database().ref('topics/' + response.text + '/links');
+        var dbRef = firebase.database().ref('topics/' + response.text.toLowerCase() + '/links');
         dbRef.once('value', function(data) {
             if (data.val()) {
                 data.forEach(function(link) {
@@ -55,5 +60,44 @@ TopicService.prototype.getLinks = function (firebase, bot, message) {
 
     bot.startConversation(message, askTopic);
 };
+
+TopicService.prototype.getTopics = function(firebase, bot, message) {
+    waterfall([
+        //Get all Topics in db
+        function (callback)
+        {
+            getTopicsFromDb(firebase, function(err, topics)	{
+                callback(null, topics);
+            });
+        },
+        //List topics in channel
+        function (topics, callback){
+            bot.reply(message, buildTopicsListMsg(topics));
+        }
+    ], function (err) {
+        if (err) {
+            logger.error("Fatal error during get topics: " + err);
+        }
+    });
+}
+
+function getTopicsFromDb(firebase, callback) {
+    var topics = [];
+    var dbRef = firebase.database().ref("topics").orderByKey();
+    dbRef.once("value").then(function (snapshot) {
+        snapshot.forEach(function (childSnapshot) {
+            topics.push(childSnapshot.key)
+        })
+        return callback(null, topics);
+    });
+}
+
+function buildTopicsListMsg(topics) {
+    var msg = "Here are the Topics we have:" + os.EOL;
+    for(var i=1; i<= topics.length; i++) {
+        msg += " " + i + ") " + topics[i-1] + os.EOL;
+    }
+    return msg;
+}
 
 module.exports = new TopicService();
