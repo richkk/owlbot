@@ -84,7 +84,7 @@ controller.hears(['get a link', 'get some links', 'get links', 'need links',
 
 // GET LIST OF TOPICS
 controller.hears(['get topics', 'list topics'],
-    'direct_message, direct_mention, mention', function(bot, message) {
+    'direct_message,direct_mention,mention', function(bot, message) {
             TopicService.getTopics(Firebase, bot, message);
 });
 
