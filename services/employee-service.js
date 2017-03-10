@@ -33,7 +33,7 @@ EmployeeService.prototype.addEmployeeAndRoleAndSkills = function (employeeName, 
 		//Add new skills for employee
 		function (currentSkills, callback)
 		{
-			var newSkills = []
+			var newSkills = [];
 			for (var i = 0; i < skills.length; i++) {
 				var found = false;
 				for (var j = 0; j < currentSkills.length; j++) {
@@ -59,19 +59,11 @@ EmployeeService.prototype.addEmployeeAndRoleAndSkills = function (employeeName, 
 };
 
 EmployeeService.prototype.whoKnows = function(firebase, bot, message) {
-	var tokenizedMessage = message.text.match(/(\S+)\s*(who knows about)\s*(\S+)/)[0].split(" ");
-	var role = tokenizedMessage[0];
-	var skill = tokenizedMessage[tokenizedMessage.length - 1];
 
-	var lookup = function(error, convo) {
+	var lookup = function(response, convo, role) {
+        var skill = response.text;
 		convo.say('Okay, you need a ' + role + ' who knows about ' + skill + '.');
 		var dbRef = firebase.database().ref('employees');
-		// dbRef.orderByChild('skills').on("child_added", function (snapshot) {
-		// 	snapshot.forEach(function (employee) {
-		// 		convo.say(employee.key);
-		// 		convo.next();
-		// 	})
-		// });
 		dbRef.once("value", function(employees) {
 			employees.forEach(function(employee) {
 				if (employee.val().roles[role]) {
@@ -87,7 +79,23 @@ EmployeeService.prototype.whoKnows = function(firebase, bot, message) {
 		})
 	};
 
-	bot.startConversation(message, lookup);
+	var askSkill = function(response, convo) {
+        var role = response.text;
+        convo.say('Okay, a ' + role + '.');
+        convo.ask('What skill?', function (response, convo) {
+            lookup(response, convo, role);
+            convo.next();
+        });
+    };
+
+	var askRole = function(error, convo) {
+        convo.ask('What employee role do you need?', function (response, convo) {
+            askSkill(response, convo);
+            convo.next();
+        });
+    };
+
+	bot.startConversation(message, askRole);
 };
 
 EmployeeService.prototype.findAnEmployee = function (firebase, bot, message) {
