@@ -6,9 +6,10 @@ var Firebase = require('firebase-admin');
 var ReactionService = require('./utilities/reaction-service');
 var RoleService = require('./services/role-service');
 var ShutdownService = require('./services/shutdown-service');
-var TootsieRollService = require('./services/tootsie-roll-service');
+var JokeService = require('./services/joke-service');
 var TopicService = require('./services/topic-service');
 var UptimeService = require('./services/uptime-service');
+var InfoTips = require('./utilities/info-tips');
 var InterviewService = require('./services/interview-service');
 var EmployeeService = require('./services/employee-service');
 
@@ -33,36 +34,56 @@ async.waterfall([
 // ****CONTROLLER****
 
 // HELLO
-controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['hello', '^hi', '^greetings'], 'direct_message,direct_mention,mention', function(bot, message) {
     ReactionService.addReaction(bot, message, "robot_face");
     bot.reply(message, 'Hello! I am an OwlBot and I know a lot about Who.');
 });
 
+controller.hears(['what can you do'], 'direct_message,direct_mention,mention', function(bot, message) {
+    bot.startConversation(message, function(err, convo) {
+        if (err) {
+            logger.error(err.message);
+        } else {
+            convo.say('Here are some things I can do.');
+            convo.say('First of all, I can\'t be in a channel unless I\'m invited. Like a vampire. But don\'t worry, ' +
+                'I\'m not a vampire, I\'m a :robot_face:. So use "/invite."');
+            for (var tip in InfoTips) {
+                if (InfoTips.hasOwnProperty(tip)) {
+                    convo.say(InfoTips[tip]);
+                    convo.next();
+                }
+            }
+        }
+
+    });
+});
+
 // NEW ROLE
-controller.hears(['teach you about a new kind of employee'],
+controller.hears(['teach you about a kind of employee', 'teach you a new role', 'save a role'],
     'direct_message,direct_mention,mention', function(bot, message) {
         RoleService.teachNewRole(Firebase, bot, message);
 });
 
 // NEW SKILL
-controller.hears(['teach you about a skill'],
+controller.hears(['teach you about a skill', 'teach you a new skill', 'teach you a skill', 'save a skill'],
     'direct_message,direct_mention,mention', function(bot, message) {
         RoleService.teachSkill(Firebase, bot, message);
 });
 
 // NEW LINK
-controller.hears(['add a link'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['add a link', 'save a link'], 'direct_message,direct_mention,mention', function(bot, message) {
     TopicService.addLink(Firebase, bot, message);
 });
 
 // GET LINKS
-controller.hears(['get a link', 'get links', 'need links', 'need some links'],
+controller.hears(['get a link', 'get some links', 'get links', 'need links',
+        'need a link', 'need some links', 'get some info'],
     'direct_message,direct_mention,mention', function(bot, message) {
         TopicService.getLinks(Firebase, bot, message);
 });
 
 // INTERVIEW ME
-controller.hears(['interviewtime', 'ime'],'direct_message,direct_mention,mention', function(bot,message) {
+controller.hears(['interview me'],'direct_message,direct_mention,mention', function(bot,message) {
     InterviewService.handle(Firebase, bot, message);
 });
 
@@ -75,12 +96,42 @@ controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function
 controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
     'direct_message,direct_mention,mention', function(bot, message) {
         UptimeService.handle(bot, message);
-    });
+});
 
 // JOKES
 controller.hears(['how many licks', 'tootsie roll'],
     'direct_message,direct_mention,mention', function(bot, message) {
-        TootsieRollService.handle(Firebase, bot, message);
+        JokeService.handleTootsieRoll(Firebase, bot, message);
+});
+
+controller.hears(['favorite kind of math', 'do you like math', 'favorite subject'],
+    'direct_message,direct_mention,mention', function(bot, message) {
+        bot.reply(message, 'I like owlgebra. :school: :mortar_board:');
+});
+
+controller.hears(['favorite song', 'favorite kind of music', 'favorite music', 'do you like music'],
+    'direct_message,direct_mention,mention', function(bot, message) {
+        bot.reply(message, ':microphone: Owl you need is :heart: :notes:');
+    });
+
+controller.hears(['favorite kind of book', 'do you like books', 'favorite book'],
+    'direct_message,direct_mention,mention', function(bot, message) {
+        bot.reply(message, 'I like hoo-dunnits. :mag: :sleuth_or_spy:');
+    });
+
+controller.hears(['tell a joke', 'tell us a joke', 'do you know any jokes',
+        'knock knock joke'], 'direct_message,direct_mention,mention',
+    function(bot, message) {
+        JokeService.knockKnockJoke(bot, message);
+});
+
+controller.hears(['do you know any dank memes', 'send me a dank meme', 'what is a dank meme'],
+    'direct_message,direct_mention,mention',
+    function(bot, message) {
+        bot.reply(message, {
+            text: "This video will explain: https://www.youtube.com/watch?v=i86FOvnahhA",
+            unfurl_media: false
+        });
 });
 
 // EMPLOYEES

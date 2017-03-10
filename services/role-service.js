@@ -1,3 +1,8 @@
+"use strict";
+var bunyan = require('bunyan');
+
+var logger = bunyan.createLogger({name: "RoleService"});
+
 function RoleService() {
     // See prototype methods
 }
@@ -81,26 +86,55 @@ RoleService.prototype.teachSkill = function(firebase, bot, message) {
     bot.startConversation(message, askRole);
 };
 
-RoleService.prototype.getRoles = function(firebase, done) {
+RoleService.prototype.getRoles = function(firebase, done)
+{
     var roles = []
     var dbRef = firebase.database().ref("roles").orderByKey();
-    dbRef.once("value").then(function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-            roles.push(childSnapshot.key)
-        })
-        return done(null, roles);
+    dbRef.once("value").then(function (snapshot)
+            {
+                snapshot.forEach(function (childSnapshot)
+                {
+                    roles.push(childSnapshot.key)
+                })
+                return done(null, roles);
+            }
+    );
+}
+
+RoleService.prototype.getSkills = function(role, firebase, callback) {
+    var skills = []
+    var dbRef = firebase.database().ref("roles/" + role + '/skills');
+    dbRef.once("value", function(snapshot) {
+        if (snapshot.val()) {
+            snapshot.forEach(function(childSnapshot) {
+                skills.push(childSnapshot.val())
+            })
+        }
+        callback(null, skills);
     });
 };
 
 RoleService.prototype.getSkills = function(firebase, theRole, done) {
     var skills = [];
     var dbRef = firebase.database().ref("roles/" + theRole + "/skills");
-    dbRef.once("value").then(function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
+    dbRef.once("value").then(function (snapshot) {
+        snapshot.forEach(function (childSnapshot) {
             skills.push(childSnapshot.key);
         })
         return done(null, skills);
     });
+};
+
+RoleService.prototype.addRole = function(role, firebase) {
+    //Could not just add a "role" without a skill so added a 'placeholder' skill
+    var dbRef = firebase.database().ref("roles/" + role + "/skills");
+    dbRef.child("placeholder").set('true');
+};
+
+RoleService.prototype.addRoleAndSkill = function(role, skill, firebase) {
+    var dbRef = firebase.database().ref("roles/" + role);
+    dbRef.child('skills').push(skill);
+    logger.info("Added role " + role + " and skill " + skill);
 };
 
 module.exports = new RoleService();
