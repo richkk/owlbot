@@ -88,12 +88,12 @@ controller.hears(['interview me'],'direct_message,direct_mention,mention', funct
 });
 
 // WHO KNOWS ABOUT
-controller.hears(['who knows about'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['who knows about', 'person who knows'], 'direct_message,direct_mention,mention', function(bot, message) {
    EmployeeService.whoKnows(Firebase, bot, message);
 });
 
 // FIND EMPLOYEE
-controller.hears(['find an employee'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['find an employee', 'find a kind of employee'], 'direct_message,direct_mention,mention', function(bot, message) {
    EmployeeService.findAnEmployee(Firebase, bot, message);
 });
 
