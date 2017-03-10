@@ -48,12 +48,13 @@ controller.hears(['what can you do'], 'direct_message,direct_mention,mention', f
         if (err) {
             logger.error(err.message);
         } else {
+            var i = 1;
             convo.say('Here are some things I can do.');
             convo.say('First of all, I can\'t be in a channel unless I\'m invited. Like a vampire. But don\'t worry, ' +
                 'I\'m not a vampire, I\'m a :robot_face:. So use "/invite."');
             for (var tip in InfoTips) {
                 if (InfoTips.hasOwnProperty(tip)) {
-                    convo.say(InfoTips[tip]);
+                    convo.say(i++ + ') ' + InfoTips[tip]);
                     convo.next();
                 }
             }
