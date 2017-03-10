@@ -103,7 +103,7 @@ controller.hears(['who knows about', 'person who knows'], 'direct_message,direct
 });
 
 // FIND EMPLOYEE
-controller.hears(['find an employee', 'find a kind of employee'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['find an employee', 'find a kind of employee', 'find a person'], 'direct_message,direct_mention,mention', function(bot, message) {
    EmployeeService.findAnEmployee(Firebase, bot, message);
 });
 
