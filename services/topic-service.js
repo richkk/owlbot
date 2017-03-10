@@ -9,7 +9,7 @@ function TopicService() {
 
 TopicService.prototype.addLink = function(firebase, bot, message) {
     var askLink = function (response, convo) {
-        var topic = response.text;
+        var topic = response.text.toLowerCase();
         convo.say('Okay, a new link about ' + topic + '.');
         convo.ask('What is the link?', function(response, convo) {
             var dbRef = firebase.database().ref('topics/' + topic + '/links');
