@@ -67,7 +67,7 @@ EmployeeService.prototype.whoKnows = function(firebase, bot, message) {
 		var dbRef = firebase.database().ref('employees');
 		dbRef.once("value", function(employees) {
 			employees.forEach(function(employee) {
-				if (employee.val().roles[role]) {
+				if (employee.val().roles[role.toLowerCase()]) {
 					var skills = employee.val().skills;
 					for (var item in skills) {
 						if (skills.hasOwnProperty(item) && skills[item].toLowerCase() === skill.toLowerCase()) {
